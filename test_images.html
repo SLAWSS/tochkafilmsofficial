@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест изображений</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .poster { margin: 10px; display: inline-block; text-align: center; }
+        .poster img { width: 150px; height: 225px; border: 1px solid #ccc; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Тест постеров TochkaFilms</h1>
+    
+    <h2>Постеры фильмов:</h2>
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/media/posters/matritsa_1999.jpg" alt="Матрица" 
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Матрица: <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/media/posters/nachalo_2010.jpg" alt="Начало"
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Начало: <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/media/posters/krik_1996.jpg" alt="Крик"
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Крик (1996): <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/media/posters/krik__2023.jpg" alt="Крик 6"
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Крик 6 (2023): <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <h2>Статические изображения:</h2>
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/static/images/logo.png" alt="Логотип"
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Логотип: <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <div class="poster">
+        <img src="http://127.0.0.1:8000/static/images/action-icon.png" alt="Иконка боевика"
+             onload="this.nextSibling.innerHTML='✓ Загружен'" 
+             onerror="this.nextSibling.innerHTML='✗ Ошибка загрузки'">
+        <div>Иконка боевика: <span class="loading">Загружается...</span></div>
+    </div>
+    
+    <h2>Инструкции:</h2>
+    <p>1. Убедитесь, что сервер Django запущен: <code>python manage.py runserver</code></p>
+    <p>2. Откройте этот файл в браузере</p>
+    <p>3. Если изображения не загружаются, проверьте консоль браузера (F12)</p>
+    
+    <h2>Прямые ссылки для проверки:</h2>
+    <ul>
+        <li><a href="http://127.0.0.1:8000/media/posters/matritsa_1999.jpg" target="_blank">Постер "Матрица"</a></li>
+        <li><a href="http://127.0.0.1:8000/media/posters/krik_1996.jpg" target="_blank">Постер "Крик"</a></li>
+        <li><a href="http://127.0.0.1:8000/static/images/logo.png" target="_blank">Логотип</a></li>
+        <li><a href="http://127.0.0.1:8000/" target="_blank">Главная страница сайта</a></li>
+    </ul>
+</body>
+</html>

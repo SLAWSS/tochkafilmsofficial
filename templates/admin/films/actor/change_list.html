@@ -1,0 +1,185 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .actor-photo-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .actor-photo-preview:hover {
+            transform: scale(2.5);
+            z-index: 1000;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+            border-color: #e50914;
+        }
+        
+        .actor-name {
+            font-weight: 600;
+            color: #e50914 !important;
+            font-size: 1.1em;
+        }
+        
+        .actor-age {
+            background: rgba(229, 9, 20, 0.1);
+            color: #e50914;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .actor-birthplace {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        
+        .actor-films-count {
+            background: linear-gradient(135deg, #e50914, #b8070f);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .actor-bio-preview {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+            line-height: 1.4;
+            max-width: 300px;
+        }
+        
+        .actors-stats {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(229, 9, 20, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e50914;
+            display: block;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .actor-card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .actor-card-hover:hover {
+            background: rgba(229, 9, 20, 0.05) !important;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}
+    <h1>🎭 Управление актерами</h1>
+    <div class="actors-stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ cl.result_count }}</span>
+            <span class="stat-label">Всего актеров</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="with-photos">-</span>
+            <span class="stat-label">С фотографиями</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="total-films">-</span>
+            <span class="stat-label">Всего фильмов</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="avg-age">-</span>
+            <span class="stat-label">Средний возраст</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block result_list %}
+    {{ block.super }}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Подсчет статистики актеров
+        const rows = document.querySelectorAll('#result_list tbody tr');
+        let withPhotos = 0;
+        let totalFilms = 0;
+        let totalAge = 0;
+        let actorCount = 0;
+        
+        rows.forEach(row => {
+            // Проверяем наличие фото
+            if (row.querySelector('.actor-photo-preview')) {
+                withPhotos++;
+            }
+            
+            // Подсчитываем фильмы (ищем числа в ячейках)
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                const filmCount = cell.textContent.match(/(\d+)\s*фильм/);
+                if (filmCount) {
+                    totalFilms += parseInt(filmCount[1]);
+                }
+                
+                // Подсчитываем возраст
+                const ageMatch = cell.textContent.match(/(\d+)\s*лет/);
+                if (ageMatch) {
+                    totalAge += parseInt(ageMatch[1]);
+                    actorCount++;
+                }
+            });
+        });
+        
+        // Обновляем статистику
+        document.getElementById('with-photos').textContent = withPhotos;
+        document.getElementById('total-films').textContent = totalFilms;
+        document.getElementById('avg-age').textContent = actorCount > 0 ? Math.round(totalAge / actorCount) : 0;
+        
+        // Добавляем интерактивность к фотографиям
+        const photos = document.querySelectorAll('.actor-photo-preview');
+        photos.forEach(photo => {
+            photo.addEventListener('mouseenter', function() {
+                this.style.zIndex = '1000';
+            });
+            
+            photo.addEventListener('mouseleave', function() {
+                this.style.zIndex = 'auto';
+            });
+        });
+        
+        // Добавляем hover эффект к строкам
+        rows.forEach(row => {
+            row.classList.add('actor-card-hover');
+        });
+    });
+    </script>
+{% endblock %}

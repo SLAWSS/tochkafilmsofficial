@@ -1,0 +1,190 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .film-poster-preview {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .film-poster-preview:hover {
+            transform: scale(3) translateY(-20px);
+            z-index: 1000;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+        }
+        
+        .film-title {
+            font-weight: 600;
+            color: #e50914 !important;
+        }
+        
+        .film-year {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+        
+        .film-rating {
+            background: linear-gradient(135deg, #e50914, #b8070f);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .film-duration {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+        
+        .trailer-link {
+            color: #22c55e !important;
+            font-weight: 500;
+        }
+        
+        .trailer-link:hover {
+            color: #16a34a !important;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+        
+        .no-trailer {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+        
+        .featured-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .film-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .category-tag {
+            background: rgba(229, 9, 20, 0.2);
+            color: #e50914;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .stats-summary {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(229, 9, 20, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e50914;
+            display: block;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}
+    <h1>🎬 Управление фильмами</h1>
+    <div class="stats-summary">
+        <div class="stat-item">
+            <span class="stat-number">{{ cl.result_count }}</span>
+            <span class="stat-label">Всего фильмов</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="with-posters">-</span>
+            <span class="stat-label">С постерами</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="with-trailers">-</span>
+            <span class="stat-label">С трейлерами</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="featured-count">-</span>
+            <span class="stat-label">Рекомендуемых</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block result_list %}
+    {{ block.super }}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Подсчет статистики
+        const rows = document.querySelectorAll('#result_list tbody tr');
+        let withPosters = 0;
+        let withTrailers = 0;
+        let featured = 0;
+        
+        rows.forEach(row => {
+            // Проверяем наличие постера (ищем img элементы)
+            if (row.querySelector('img')) {
+                withPosters++;
+            }
+            
+            // Проверяем наличие трейлера (ищем ссылки с "Смотреть")
+            if (row.textContent.includes('Смотреть трейлер')) {
+                withTrailers++;
+            }
+            
+            // Проверяем рекомендуемые (ищем галочки в соответствующем столбце)
+            const featuredCell = row.querySelector('td:nth-child(5)'); // Предполагаем, что это 5-й столбец
+            if (featuredCell && featuredCell.querySelector('.true, input[checked]')) {
+                featured++;
+            }
+        });
+        
+        // Обновляем статистику
+        document.getElementById('with-posters').textContent = withPosters;
+        document.getElementById('with-trailers').textContent = withTrailers;
+        document.getElementById('featured-count').textContent = featured;
+        
+        // Добавляем интерактивность к постерам
+        const posters = document.querySelectorAll('.film-poster-preview');
+        posters.forEach(poster => {
+            poster.addEventListener('mouseenter', function() {
+                this.style.zIndex = '1000';
+            });
+            
+            poster.addEventListener('mouseleave', function() {
+                this.style.zIndex = 'auto';
+            });
+        });
+    });
+    </script>
+{% endblock %}

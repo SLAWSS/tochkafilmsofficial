@@ -1,0 +1,282 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .film-form-container {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            border: 1px solid rgba(229, 9, 20, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .film-poster-large {
+            max-width: 200px;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(229, 9, 20, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .film-poster-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(229, 9, 20, 0.4);
+            border-color: #e50914;
+        }
+        
+        .film-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .film-details {
+            background: rgba(20, 20, 20, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .film-poster-section {
+            text-align: center;
+        }
+        
+        .film-title-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e50914;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(229, 9, 20, 0.3);
+        }
+        
+        .film-year-rating {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .film-year {
+            background: rgba(229, 9, 20, 0.1);
+            color: #e50914;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+        
+        .film-rating {
+            background: linear-gradient(135deg, #e50914, #b8070f);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+        
+        .film-duration {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .film-categories-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .category-badge {
+            background: rgba(229, 9, 20, 0.2);
+            color: #e50914;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .trailer-preview {
+            margin-top: 15px;
+        }
+        
+        .trailer-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .trailer-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+            color: white;
+        }
+        
+        .form-section {
+            background: rgba(20, 20, 20, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-section h3 {
+            color: #e50914;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(229, 9, 20, 0.2);
+        }
+        
+        .field-wrapper {
+            margin-bottom: 20px;
+        }
+        
+        .field-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .field-input {
+            width: 100%;
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .field-input:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
+            outline: none;
+        }
+        
+        .actors-section {
+            background: rgba(20, 20, 20, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .actors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .actor-card {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(229, 9, 20, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .actor-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.2);
+        }
+        
+        .actor-photo-small {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .actor-name-small {
+            color: #e50914;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .film-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .film-poster-section {
+                order: -1;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="film-form-container">
+        {% if original %}
+            <div class="film-info-grid">
+                <div class="film-details">
+                    <div class="film-title-display">{{ original.title }}</div>
+                    <div class="film-year-rating">
+                        <span class="film-year">{{ original.year }}</span>
+                        {% if original.rating %}
+                            <span class="film-rating">⭐ {{ original.rating }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="film-duration">
+                        ⏱️ {{ original.duration }} минут
+                    </div>
+                    {% if original.categories.all %}
+                        <div class="film-categories-display">
+                            {% for category in original.categories.all %}
+                                <span class="category-badge">{{ category.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if original.trailer_url %}
+                        <div class="trailer-preview">
+                            <a href="{{ original.trailer_url }}" target="_blank" class="trailer-link">
+                                🎬 Смотреть трейлер
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="film-poster-section">
+                    {% if original.poster %}
+                        <img src="{{ original.poster.url }}" alt="{{ original.title }}" class="film-poster-large">
+                    {% else %}
+                        <div style="width: 200px; height: 300px; background: rgba(229, 9, 20, 0.1); border: 2px dashed rgba(229, 9, 20, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.5);">
+                            Нет постера
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    {{ block.super }}
+    
+    {% if original.actors.all %}
+        <div class="actors-section">
+            <h3 style="color: #e50914; margin-bottom: 15px;">🎭 Актеры в фильме</h3>
+            <div class="actors-grid">
+                {% for actor in original.actors.all %}
+                    <div class="actor-card">
+                        {% if actor.photo %}
+                            <img src="{{ actor.photo.url }}" alt="{{ actor.name }}" class="actor-photo-small">
+                        {% endif %}
+                        <div class="actor-name-small">{{ actor.name }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
